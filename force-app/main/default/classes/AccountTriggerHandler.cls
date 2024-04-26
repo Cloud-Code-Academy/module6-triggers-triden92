@@ -65,17 +65,22 @@ public with sharing class AccountTriggerHandler extends TriggerHandler{
     }
 
     public static List<Contact> defaultContact(List<Account> accList){
-        List<Contact> contactCreateList = new List<Contact>();
+        Set<Contact> contactSet = new Set<Contact>();
+        List<Contact> contactInsertList = new List<Contact>();
+
         for(Account acc :accList){
             Contact newContact = new Contact();
             newContact.LastName = 'DefaultContact';
             newContact.Email = 'default@email.com';
             newContact.AccountId = acc.Id;
 
-            contactCreateList.add(newContact);
+            contactSet.add(newContact);
 
         }
-        return contactCreateList;
+        for(Contact eachContact :contactSet){
+            contactInsertList.add(eachContact);
+        }
+        return contactInsertList;
     }
     
 }
