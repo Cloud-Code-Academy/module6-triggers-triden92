@@ -32,8 +32,22 @@ public with sharing class OpportunityTriggerHandler extends TriggerHandler {
     }
 
     public static void deleteClosedWonBankingOpportunityValidation(List<Opportunity> oppList){
+        List<String> accIdList = new List<String>();
         for(Opportunity eachOpp :oppList){
-            if(eachOpp.StageName == 'Closed Won'){
+            accIdList.add(eachOpp.AccountId);
+        }
+        List<Account> accList = [SELECT Id,Industry FROM Account WHERE Id IN :accIdList];
+        Map<Id,String> accountIndustryByIdMap = new Map<Id,String>();
+        for(Account acc: accList){
+            accountIndustryByIdMap.put(acc.Id,acc.Industry);
+        }
+        
+        for(Opportunity eachOpp :oppList){
+            if(eachOpp.StageName == 'Closed Won' && accountIndustryByIdMap.get(eachOpp.AccountId) == 'Banking'){
+                System.debug(eachOpp.StageName);
+                System.debug(accountIndustryByIdMap.get(eachOpp.AccountId));
+                
+                
                 eachOpp.addError('Cannot delete closed opportunity for a banking account that is won');
             }
         }
